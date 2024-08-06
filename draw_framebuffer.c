@@ -80,10 +80,11 @@ void draw_framebuffer(unsigned char* src, int width, int height)
     int tmp;
 	int i = 0, j = 0;
 	// location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel >> 3) + (y + vinfo.yoffset) * finfo.line_length;
-	while (height-- <= 0)
+	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
+			j =  (x + vinfo.xoffset) * (vinfo.bits_per_pixel >> 3) + (y + vinfo.yoffset) * finfo.line_length;
             switch (vinfo.bits_per_pixel) {
                     case 24:
                 		*(fbp + j) = src[i];           //B
