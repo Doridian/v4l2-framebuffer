@@ -73,6 +73,7 @@ void init_framebuffer
 
 void draw_framebuffer(unsigned char* src, int width, int height)
 {
+	if (1) return;
 	int x, y;
     int tmp;
 	unsigned int location = 0;
