@@ -12,7 +12,7 @@ OBJECTS	:= $(addprefix $(BUILD)/,$(SOURCES:%.c=%.o))
 
 #------------------------------------------------
 
-CFLAGS	:= -Wall -g -O2 -lto
+CFLAGS	:= -Wall -g -O2 -ffast-math -lto
 LDFLAGS	:= -lc -flto
 
 #------------------------------------------------
