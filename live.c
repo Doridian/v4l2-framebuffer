@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
 		did_capture = video_capture(src_image, width, height);
 		if (did_capture > 0) {
 			draw_framebuffer(src_image, width, height);
+			printf("Render\n");
 		}
 	}
     free_video_capture();
