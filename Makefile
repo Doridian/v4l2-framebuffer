@@ -12,7 +12,10 @@ OBJECTS	:= $(addprefix $(BUILD)/,$(SOURCES:%.c=%.o))
 
 #------------------------------------------------
 
-CFLAGS	:= -Wall -g -O2 -ffast-math -lto
+CFLAGS	:= -Wall -g -lto -march=armv7-a -mfloat-abi=hard -mfpu=neon -O2 -pipe -fstack-protector-strong -fno-plt -fexceptions \
+        -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security \
+        -fstack-clash-protection \
+        -fno-omit-frame-pointer
 LDFLAGS	:= -lc -flto
 
 #------------------------------------------------
