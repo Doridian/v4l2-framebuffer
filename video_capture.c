@@ -263,7 +263,7 @@ int video_capture(unsigned char* dst, int width, int height) {
 		}
 
 		frame_idx++;
-		if (frame_idx % 2 == 0) {
+		if (frame_idx % 4 == 0) {
 			did_capture = 1;
 			unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
         	v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
