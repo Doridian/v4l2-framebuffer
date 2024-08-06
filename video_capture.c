@@ -19,16 +19,12 @@
 #include <sys/time.h>           /* for select time */
 #include <limits.h>             /* for UCHAR_MAX */
 
-
-static char* dev_name = "/dev/video0";
+static char* dev_name = "/dev/kvmd-video";
 static int fd = -1; /* vidoe0 file descriptor*/
 
 /* Queried image buffers! */
 struct buffer* buffers = NULL;
 static unsigned int n_buffers = 0;
-struct v4l2_buffer buf_in_while_loop;
-static fd_set fds;
-struct timeval tv;
 
 /* wrapped errno display function by v4l2 API */
 static void errno_exit(const char * s) {
@@ -140,8 +136,8 @@ static void init_device(int width, int height) {
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	fmt.fmt.pix.width = width;
 	fmt.fmt.pix.height = height;
-	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-	fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
+	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
+	fmt.fmt.pix.field = V4L2_FIELD_NONE;
 	if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt)){
 		errno_exit("VIDIOC_S_FMT");
 	}
@@ -203,22 +199,25 @@ static void uninit_device() {
 
 static void parse_im(const unsigned char *im_yuv, unsigned char *dst, int width, int height) {
     const int IM_SIZE = width * height;
-    unsigned char Y = 0;
-    unsigned char U = 0;
-    unsigned char V = 0;
+    int Y = 0;
+    int U = 0;
+    int V = 0;
     int B = 0;
     int G = 0;
     int R = 0;
     int i;
     for(i = 0; i < IM_SIZE; ++i){
         if(!(i & 1)){
-            U = im_yuv[2 * i + 1];
-            V = im_yuv[2 * i + 3];
+            U = im_yuv[2 * i];
+            V = im_yuv[2 * i + 2];
+
+			U -= 128;
+			V -= 128;
         }
-        Y = im_yuv[2 * i];
-        B = Y + 1.773 * (U - 128);
-        G = Y - 0.344 * (U - 128) - (0.714 * (V - 128));
-        R = Y + 1.403 * (V - 128);
+        Y = im_yuv[2 * i + 1];
+        B = Y + 1.773 * U;
+        G = Y - 0.344 * U - (0.714 * V);
+        R = Y + 1.403 * V;
         if(B > UCHAR_MAX){
             B = UCHAR_MAX;
         }
@@ -228,6 +227,15 @@ static void parse_im(const unsigned char *im_yuv, unsigned char *dst, int width,
         if(R > UCHAR_MAX){
             R = UCHAR_MAX;
         }
+		if (B < 0) {
+			B = 0;
+		}
+		if (G < 0) {
+			G = 0;
+		}
+		if (R < 0) {
+			R = 0;
+		}
         dst[3*i] = B;
         dst[3*i+1] = G;
         dst[3*i+2] = R;
@@ -241,20 +249,18 @@ void init_video_capture(int width, int height){
 }
 
 char video_capture(unsigned char* dst, int width, int height){
+	struct v4l2_buffer buf_in_while_loop;
 	char key = 0;
+	fd_set fds;
+
 	FD_ZERO(&fds);
 	FD_SET(fd, &fds);
-	FD_SET(fileno(stdin), &fds);
+
+	struct timeval tv;
 	/* Timeout. */
 	tv.tv_sec = 2;
 	tv.tv_usec = 0;
 	select(fd + 1, &fds, NULL, NULL, &tv);
-
-	if(FD_ISSET(fileno(stdin), &fds)){
-		read(fileno(stdin), &key, 1);
-		printf("key: %c\n", key);
-		return key;
-	}
 
 	if(FD_ISSET(fd, &fds)){
 		CLEAR(buf_in_while_loop);

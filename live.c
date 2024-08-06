@@ -20,26 +20,26 @@
 int main(int argc, char** argv) {
 	int width = 0, height = 0;
 
-	if (argc >= 1) width = atoi(argv[0]);
-	if (argc >= 2) height = atoi(argv[1]);
+	if (argc >= 2) width = atoi(argv[1]);
+	if (argc >= 3) height = atoi(argv[2]);
 
-	if (width == 0) width = 640;
-	if (height == 0) height = 480;
+	if (width == 0) width = 1280;
+	if (height == 0) height = 1024;
 
 	printf("Using size: %dx%d.\n", width, height);
 	usleep(1 * 1000000); // sleep one second
 
-    unsigned char src_image[width * height * 3];
+    unsigned char src_image[width * height * 4];
+    printf("Init FB\n");
     init_framebuffer();
-	init_video_capture(width, height);
+    printf("Init VC\n");
+    init_video_capture(width, height);
 	char key = 0;
+    printf("Init Done\n");
 
 	for(; ;){
 		key = video_capture(src_image, width, height);
 		draw_framebuffer(src_image, width, height);
-		if(key == 'q'){
-			break;
-		}
 	}
     free_video_capture();
 	free_framebuffer();
