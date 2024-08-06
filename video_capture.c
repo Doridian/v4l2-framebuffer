@@ -305,7 +305,7 @@ char video_capture(unsigned char* dst, int width, int height){
 		}
 
 		unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
-        //v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
+        v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
 
 		/* queue-in buffer */
 		if(-1 == xioctl(fd, VIDIOC_QBUF, &buf_in_while_loop)){
