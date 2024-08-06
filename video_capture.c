@@ -231,7 +231,9 @@ void init_video_capture(int width, int height){
 	start_capturing();
 }
 
-int video_capture(unsigned char* dst, int width, int height){
+int video_capture(unsigned char* dst, int width, int height) {
+	static int frame_idx = 0;
+
 	struct v4l2_buffer buf_in_while_loop;
 	fd_set fds;
 
@@ -256,6 +258,11 @@ int video_capture(unsigned char* dst, int width, int height){
 			default:
 				errno_exit("VIDIOC_DQBUF");
 			}
+		}
+
+		frame_idx++;
+		if (frame_idx % 2 != 0) {
+			return 0;
 		}
 
 		unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
