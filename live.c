@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
     printf("Init Done\n");
 
 	for(; ;){
+		usleep(20 * 1000);
 		key = video_capture(src_image, width, height);
 		draw_framebuffer(src_image, width, height);
 	}
