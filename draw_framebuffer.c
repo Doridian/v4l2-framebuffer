@@ -74,11 +74,9 @@ void init_framebuffer
 void draw_framebuffer(unsigned char* src, int width, int height)
 {
 	int x, y;
-    uint64_t tmp;
-	uint8_t r, g, b;
+    int tmp;
 	unsigned int location = 0;
 	int i = 0;
-	uint64_t max_nonzero = 0;
 	for(y = 0; y < height; y++)
 	{
 		for(x = 0; x < width; x++)
@@ -94,11 +92,7 @@ void draw_framebuffer(unsigned char* src, int width, int height)
                  		*(fbp + location + 2) = src[i*3 + 2];	//R
                         break;
                     case 16:
-                        b = src[i*CAM_BPP];
-                        g = src[i*CAM_BPP + 1];
-                        r = src[i*CAM_BPP + 2];
-
-                        tmp = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
+                        tmp = ((src[i*CAM_BPP] >> 3) << 11) | ((src[i*CAM_BPP + 1] >> 2) << 5) | (src[i*CAM_BPP + 2] >> 3);
 
                 		*(fbp + location + 0) = tmp & 0xFF;
                  		*(fbp + location + 1) = (tmp >> 8) & 0xFF;
@@ -107,9 +101,6 @@ void draw_framebuffer(unsigned char* src, int width, int height)
                         printf("No idea how to render %d BPP\n", vinfo.bits_per_pixel);
                         return;
             }
-			if (src[i*3] != 0 || src[i*3+1] != 0 || src[i*3+2] != 0) {
-				max_nonzero = i;
-			}
     		i++;
 		}
 	}
