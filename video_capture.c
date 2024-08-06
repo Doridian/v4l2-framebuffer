@@ -19,6 +19,8 @@
 #include <sys/time.h>           /* for select time */
 #include <limits.h>             /* for UCHAR_MAX */
 
+#define CLIP(color) (unsigned char)(((color)>0xFF)?0xff:(((color)<0)?0:(color)))
+
 static char* dev_name = "/dev/kvmd-video";
 static int fd = -1; /* vidoe0 file descriptor*/
 
