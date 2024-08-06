@@ -246,6 +246,8 @@ int video_capture(unsigned char* dst, int width, int height) {
 	tv.tv_usec = 0;
 	select(fd + 1, &fds, NULL, NULL, &tv);
 
+	int did_capture = 0;
+
 	if(FD_ISSET(fd, &fds)){
 		CLEAR(buf_in_while_loop);
 		buf_in_while_loop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -261,12 +263,11 @@ int video_capture(unsigned char* dst, int width, int height) {
 		}
 
 		frame_idx++;
-		if (frame_idx % 2 != 0) {
-			return 0;
+		if (frame_idx % 2 == 0) {
+			did_capture = 1;
+			unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
+        	v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
 		}
-
-		unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
-        v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
 
 		/* queue-in buffer */
 		if(-1 == xioctl(fd, VIDIOC_QBUF, &buf_in_while_loop)){
