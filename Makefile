@@ -13,7 +13,7 @@ OBJECTS	:= $(addprefix $(BUILD)/,$(SOURCES:%.c=%.o))
 #------------------------------------------------
 
 CFLAGS	:= -Wall -g -O2 -lto
-LDFLAGS	:= -lc -lto
+LDFLAGS	:= -lc -flto
 
 #------------------------------------------------
 all: $(NAME)
