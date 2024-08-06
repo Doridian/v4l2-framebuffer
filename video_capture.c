@@ -69,7 +69,7 @@ static void open_device() {
 static void init_mmap() {
 	struct v4l2_requestbuffers req;
 	CLEAR(req);
-	req.count = 4;
+	req.count = 6;
 	req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	req.memory = V4L2_MEMORY_MMAP;
 	/* Initiate Memory Mapping */
@@ -232,8 +232,6 @@ void init_video_capture(int width, int height){
 }
 
 int video_capture(unsigned char* dst, int width, int height) {
-	static int frame_idx = 0;
-
 	struct v4l2_buffer buf_in_while_loop;
 	fd_set fds;
 
@@ -262,12 +260,8 @@ int video_capture(unsigned char* dst, int width, int height) {
 			}
 		}
 
-		frame_idx++;
-		if (frame_idx % 4 == 0) {
-			did_capture = 1;
-			unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
-        	v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
-		}
+		unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
+        v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
 
 		/* queue-in buffer */
 		if(-1 == xioctl(fd, VIDIOC_QBUF, &buf_in_while_loop)){
