@@ -1,0 +1,12 @@
+kvmd:
+    streamer:
+        post_stop_cmd:
+        - /usr/bin/sudo
+        - /usr/bin/systemctl
+        - start
+        - v4l2-framebuffer
+        pre_start_cmd:
+        - /usr/bin/sudo
+        - /usr/bin/systemctl
+        - stop
+        - v4l2-framebuffer

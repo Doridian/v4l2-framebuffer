@@ -1,0 +1,9 @@
+[Unit]
+Description=V4L2 to framebuffer proxy
+
+[Service]
+Type=simple
+ExecStart=/opt/v4l2-framebuffer/v4l2-framebuffer 1280 1024
+
+[Install]
+WantedBy=multi-user.target

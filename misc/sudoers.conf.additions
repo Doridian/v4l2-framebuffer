@@ -1,0 +1,2 @@
+kvmd ALL=(ALL) NOPASSWD: /usr/bin/systemctl stop v4l2-framebuffer
+kvmd ALL=(ALL) NOPASSWD: /usr/bin/systemctl start v4l2-framebuffer
