@@ -18,7 +18,7 @@ struct buffer {
 };
 
 void init_video_capture(int width, int height);
-char video_capture(unsigned char* dst, int width, int height);
+int video_capture(unsigned char* dst, int width, int height);
 void free_video_capture();
 
 #endif /* VIDEO_CAPTURE_H_ */

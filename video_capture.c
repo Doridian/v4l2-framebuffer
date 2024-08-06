@@ -231,9 +231,8 @@ void init_video_capture(int width, int height){
 	start_capturing();
 }
 
-char video_capture(unsigned char* dst, int width, int height){
+int video_capture(unsigned char* dst, int width, int height){
 	struct v4l2_buffer buf_in_while_loop;
-	char key = 0;
 	fd_set fds;
 
 	FD_ZERO(&fds);
@@ -267,7 +266,7 @@ char video_capture(unsigned char* dst, int width, int height){
 			errno_exit("VIDIOC_QBUF");
 		}
 	}
-	return 0;
+	return 1;
 }
 
 void free_video_capture(){

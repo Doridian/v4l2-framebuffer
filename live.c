@@ -34,12 +34,14 @@ int main(int argc, char** argv) {
     init_framebuffer();
     printf("Init VC\n");
     init_video_capture(width, height);
-	char key = 0;
     printf("Init Done\n");
 
+	int did_capture = 0;
 	for(; ;){
-		key = video_capture(src_image, width, height);
-		draw_framebuffer(src_image, width, height);
+		did_capture = video_capture(src_image, width, height);
+		if (did_capture > 0) {
+			draw_framebuffer(src_image, width, height);
+		}
 	}
     free_video_capture();
 	free_framebuffer();
