@@ -225,51 +225,6 @@ static void v4lconvert_uyvy_to_bgr24(const unsigned char *src, unsigned char *de
   }
 }
 
-static void parse_im(const unsigned char *im_yuv, unsigned char *dst, int width, int height) {
-    const int IM_SIZE = width * height;
-    int Y = 0;
-    int U = 0;
-    int V = 0;
-    int B = 0;
-    int G = 0;
-    int R = 0;
-    int i;
-    for(i = 0; i < IM_SIZE; ++i){
-        if(!(i & 1)){
-            U = im_yuv[2 * i];
-            V = im_yuv[2 * i + 2];
-
-			U -= 128;
-			V -= 128;
-        }
-        Y = im_yuv[2 * i + 1];
-        B = Y + 1.773 * U;
-        G = Y - 0.344 * U - (0.714 * V);
-        R = Y + 1.403 * V;
-        if(B > UCHAR_MAX){
-            B = UCHAR_MAX;
-        }
-        if(G > UCHAR_MAX){
-            G = UCHAR_MAX;
-        }
-        if(R > UCHAR_MAX){
-            R = UCHAR_MAX;
-        }
-		if (B < 0) {
-			B = 0;
-		}
-		if (G < 0) {
-			G = 0;
-		}
-		if (R < 0) {
-			R = 0;
-		}
-        dst[3*i] = B;
-        dst[3*i+1] = G;
-        dst[3*i+2] = R;
-    }
-}
-
 void init_video_capture(int width, int height){
 	open_device();
 	init_device(width, height);
