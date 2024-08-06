@@ -197,6 +197,32 @@ static void uninit_device() {
 	free(buffers);
 }
 
+static void v4lconvert_uyvy_to_bgr24(const unsigned char *src, unsigned char *dest,
+  int width, int height)
+{
+  int j;
+
+  while (--height >= 0) {
+    for (j = 0; j < width; j += 2) {
+      int u = src[0];
+      int v = src[2];
+      int u1 = (((u - 128) << 7) +  (u - 128)) >> 6;
+      int rg = (((u - 128) << 1) +  (u - 128) +
+		((v - 128) << 2) + ((v - 128) << 1)) >> 3;
+      int v1 = (((v - 128) << 1) +  (v - 128)) >> 1;
+
+      *dest++ = CLIP(src[1] + u1);
+      *dest++ = CLIP(src[1] - rg);
+      *dest++ = CLIP(src[1] + v1);
+
+      *dest++ = CLIP(src[3] + u1);
+      *dest++ = CLIP(src[3] - rg);
+      *dest++ = CLIP(src[3] + v1);
+      src += 4;
+    }
+  }
+}
+
 static void parse_im(const unsigned char *im_yuv, unsigned char *dst, int width, int height) {
     const int IM_SIZE = width * height;
     int Y = 0;
@@ -277,7 +303,7 @@ char video_capture(unsigned char* dst, int width, int height){
 		}
 
 		unsigned char* im_from_cam = (unsigned char*)buffers[buf_in_while_loop.index].start;
-        parse_im(im_from_cam, dst, width, height);
+        v4lconvert_uyvy_to_bgr24(im_from_cam, dst, width, height);
 
 		/* queue-in buffer */
 		if(-1 == xioctl(fd, VIDIOC_QBUF, &buf_in_while_loop)){
