@@ -5,7 +5,7 @@ Description=V4L2 to framebuffer proxy
 Type=simple
 #ExecStart=/opt/v4l2-framebuffer/v4l2-framebuffer 1280 1024
 ExecStartPre=/bin/sh -c 'echo 0 > /sys/class/graphics/fbcon/cursor_blink'
-ExecStart=/opt/ffmpeg-7.0.1-armhf-static/ffmpeg -probesize 6000000000000 -f video4linux2 -re -i /dev/kvmd-video -vsync 0 -filter:v "select=not(mod(n\,5))" -pix_fmt rgb565le -f fbdev /dev/fb0
+ExecStart=/opt/ffmpeg-7.0.1-armhf-static/ffmpeg -probesize 6000000000000 -f video4linux2 -re -i /dev/kvmd-video -vsync 0 -filter:v "select=not(mod(n\,4))" -pix_fmt rgb565le -f fbdev /dev/fb0
 ExecStopPost=/bin/sh -c 'echo 1 > /sys/class/graphics/fbcon/cursor_blink'
 
 [Install]
